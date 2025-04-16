@@ -1,33 +1,20 @@
+import os
 from flask import Flask, request, jsonify
 import joblib
+import numpy as np
 
 app = Flask(__name__)
 
-# Load the trained sentiment analysis model
+# Load the model
 model = joblib.load('sentimental_model.pkl')
-
-@app.route('/', methods=['GET'])
-def home():
-    return "Sentiment Analysis API is live!"
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Parse JSON request
     data = request.get_json(force=True)
+    text = data['text']
+    prediction = model.predict([text])
+    return jsonify({'sentiment': prediction[0]})
 
-    # 'text' should be the input key containing the sentence or document
-    try:
-        input_text = [data['text']]  # wrap in list to make it iterable for vectorizers/models
-    except Exception as e:
-        return jsonify({'error': 'Invalid input format. Expected "text": "<your sentence here>"', 'details': str(e)}), 400
-
-    # Make prediction
-    prediction = model.predict(input_text)[0]
-
-    # Optional: map numeric prediction to label
-    sentiment = 'positive' if prediction == 1 else 'negative'
-
-    return jsonify({'sentiment': sentiment})
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    # Bind to 0.0.0.0 to make the app accessible externally and use the Railway port
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
