@@ -13,7 +13,9 @@ def predict():
     data = request.get_json(force=True)
     text = data['text']
     prediction = model.predict([text])
-    return jsonify({'sentiment': prediction[0]})
+    return jsonify({'sentiment': int(prediction[0])})
+
+
 
 if __name__ == "__main__":
     # Bind to 0.0.0.0 to make the app accessible externally and use the Railway port
