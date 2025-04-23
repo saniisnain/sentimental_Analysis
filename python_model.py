@@ -8,7 +8,10 @@ app = Flask(__name__)
 # Load the model
 model = joblib.load('sentimental_model.pkl')
 
-@app.route('/predict', methods=['POST'])
+@app.route('/')
+def home():
+    return 'Sentiment analysis model is running!'
+
 def predict():
     data = request.get_json(force=True)
     text = data['text']
