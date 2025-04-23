@@ -11,7 +11,7 @@ model = joblib.load('sentimental_model.pkl')
 @app.route('/')
 def home():
     return 'Sentiment analysis model is running!'
-
+@app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json(force=True)
     text = data['text']
